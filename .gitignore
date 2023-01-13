@@ -1,1 +1,5 @@
 .env
+60SecondsClips/*
+!60SecondsClips/.gitkeep
+Shorts/*
+!Shorts/.gitkeep

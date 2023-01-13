@@ -1,12 +1,12 @@
 package main
 
 import (
-	"RedditShortStoryMaker/MP3Handler"
+	"RedditShortStoryMaker/Bundler"
+	"RedditShortStoryMaker/ProfanityHandler"
 	"RedditShortStoryMaker/RedditHandler"
 	"fmt"
 	"github.com/joho/godotenv"
 	"log"
-	"math"
 	"os"
 )
 
@@ -36,15 +36,9 @@ func main() {
 	if post == nil {
 		panic(err)
 	}
-	mp3Handler := MP3Handler.NewPollyService(MP3Handler.Matthew)
-	fmt.Printf("%v", len(post.Title+" \n"+post.Body))
-	fmt.Printf("%v", (post.Title + " \n" + post.Body))
 
-	err = mp3Handler.Synthesize(post.Body[:int(math.Min(2000, float64(len(post.Body))))], "test.mp3")
-	if err != nil {
-		panic(err)
-	}
-
+	ProfanityHandler.RemoveProfanity(&post.Body)
+	Bundler.Bundle(post)
 	fmt.Println("Done")
-
+	return
 }
