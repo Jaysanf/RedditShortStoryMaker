@@ -4,11 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/vartanbeno/go-reddit/v2/reddit"
+	"golang.org/x/exp/slices"
 )
 
-/*
-TODO: 1 - Get un post
-*/
 type RedditHandler struct {
 	client *reddit.Client
 }
@@ -26,17 +24,26 @@ func (redditHandler *RedditHandler) GetClient(id string, secret string, username
 	return nil
 }
 
-func (redditHandler *RedditHandler) GetTopPosts(subredditName string) error {
-	posts, _, err := redditHandler.client.Subreddit.TopPosts(context.Background(), "golang", &reddit.ListPostOptions{
+func (redditHandler *RedditHandler) GetTopPosts(subredditName string, amount int, timePeriod string) ([]*reddit.Post, error) {
+	posts, _, err := redditHandler.client.Subreddit.TopPosts(context.Background(), subredditName, &reddit.ListPostOptions{
 		ListOptions: reddit.ListOptions{
-			Limit: 5,
+			Limit: amount,
 		},
-		Time: "all",
+		Time: timePeriod,
 	})
 	fmt.Printf("Received %d posts.\n", len(posts))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	return posts, nil
+}
+
+func (redditHandler *RedditHandler) GetUnusedPost(posts []*reddit.Post, ids []string) *reddit.Post {
+	for _, post := range posts {
+		if !slices.Contains(ids, post.ID) {
+			return post
+		}
+	}
 	return nil
 }
