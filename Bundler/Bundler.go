@@ -3,6 +3,7 @@ package Bundler
 import (
 	"RedditShortStoryMaker/MP3Handler"
 	"github.com/vartanbeno/go-reddit/v2/reddit"
+	"golang.org/x/exp/rand"
 	"math"
 	"os"
 	"time"
@@ -37,5 +38,26 @@ func Bundle(post *reddit.Post) error {
 	if err != nil {
 		return err
 	}
+
+	err = getRandomBackgroundVideo(dirClipsName, path)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func getRandomBackgroundVideo(videoDirName, copyPlaceDirName string) error {
+	files, err := os.ReadDir(videoDirName)
+	if err != nil {
+		return err
+	}
+	rand.Seed(uint64(time.Now().UnixNano()))
+	randomVideo := files[(rand.Intn(len(files)-1) + 1)] // Get rand video from 1 to n -1, exclude .gitkeep
+	err = copyFileContents(videoDirName+"/"+randomVideo.Name(), copyPlaceDirName+"/"+mp4Name)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
