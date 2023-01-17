@@ -5,7 +5,6 @@ import (
 	"RedditShortStoryMaker/ProfanityHandler"
 	"RedditShortStoryMaker/RedditHandler"
 	"fmt"
-	"github.com/cznic/ql"
 	"github.com/joho/godotenv"
 	"log"
 	"os"
@@ -20,8 +19,6 @@ func init() {
 }
 
 func main() {
-	// Open a connection to a SQLite3 database
-
 	redditHandler := RedditHandler.RedditHandler{}
 
 	err := redditHandler.GetClient(os.Getenv("ID"), os.Getenv("SECRET"),
@@ -38,9 +35,7 @@ func main() {
 	if post == nil {
 		panic("No post found")
 	}
-	InitDb()
 
-	return
 	ProfanityHandler.RemoveProfanity(&post.Body)
 	err = Bundler.Bundle(post)
 	if err != nil {
@@ -49,36 +44,4 @@ func main() {
 
 	fmt.Println("Done")
 	return
-}
-
-func InitDb() {
-	// Create a new table
-	db, err := ql.OpenFile("mydb.db", &ql.Options{CanCreate: true})
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer db.Close()
-
-	_, _, err = db.Run(ql.NewRWCtx(), `
-										BEGIN TRANSACTION;
-											CREATE TABLE  IF NOT EXISTS department (
-												DepartmentID   int,
-												DepartmentName string,
-											);
-											CREATE TABLE employee (
-												LastName	string,
-												DepartmentID	int,
-											);
-										COMMIT;
-									`, nil)
-	if err != nil {
-		panic(err)
-	}
-
-	// Select data from the table
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(rs)
 }
