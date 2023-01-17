@@ -31,7 +31,15 @@ func main() {
 		panic(err)
 	}
 
-	post := redditHandler.GetUnusedPost(posts, []string{})
+	usedPostID, err := redditHandler.GetUsedPostID()
+	if err != nil {
+		panic(err)
+	}
+
+	post, err := redditHandler.GetUnusedPost(posts, usedPostID)
+	if err != nil {
+		panic(err)
+	}
 	if post == nil {
 		panic("No post found")
 	}
