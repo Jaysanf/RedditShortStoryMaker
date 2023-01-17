@@ -4,8 +4,8 @@ import (
 	"RedditShortStoryMaker/MP3Handler"
 	"github.com/vartanbeno/go-reddit/v2/reddit"
 	"golang.org/x/exp/rand"
-	"math"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -19,22 +19,9 @@ func Bundle(post *reddit.Post) error {
 	if err != nil {
 		return err
 	}
+
 	path := dirOutputName + "/" + timeStamp + "/"
-
-	mp3Handler := MP3Handler.NewPollyService(MP3Handler.Matthew)
-	speech := post.Title + post.Body
-	err = mp3Handler.Synthesize(speech[:int(math.Min(2000, float64(len(post.Body))))], path+mp3Name)
-	if err != nil {
-		return err
-	}
-
-	f, err := os.Create(path + textName)
-	if err != nil {
-		return err
-	}
-
-	defer f.Close()
-	_, err = f.WriteString(post.Body)
+	err = fractionizePost(path, post)
 	if err != nil {
 		return err
 	}
@@ -47,6 +34,34 @@ func Bundle(post *reddit.Post) error {
 	return nil
 }
 
+// Create multiple mp3 and txt files for the reddit post
+func fractionizePost(path string, post *reddit.Post) error {
+	bodyFractionized := divideText(post.Body, numberOfWordsPerSplit)
+	// Adding the Title
+	bodyFractionized = append([]string{post.Title}, bodyFractionized...)
+	mp3Handler := MP3Handler.NewPollyService(MP3Handler.Matthew)
+	for i, chunkOfWords := range bodyFractionized {
+		fileName := path + strconv.Itoa(i)
+		err := mp3Handler.Synthesize(chunkOfWords, fileName+mp3File)
+		if err != nil {
+			return err
+		}
+
+		f, err := os.Create(fileName + txtFile)
+		if err != nil {
+			return err
+		}
+
+		defer f.Close()
+		_, err = f.WriteString(chunkOfWords)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func getRandomBackgroundVideo(videoDirName, copyPlaceDirName string) error {
 	files, err := os.ReadDir(videoDirName)
 	if err != nil {
@@ -54,7 +69,7 @@ func getRandomBackgroundVideo(videoDirName, copyPlaceDirName string) error {
 	}
 	rand.Seed(uint64(time.Now().UnixNano()))
 	randomVideo := files[(rand.Intn(len(files)-1) + 1)] // Get rand video from 1 to n -1, exclude .gitkeep
-	err = copyFileContents(videoDirName+"/"+randomVideo.Name(), copyPlaceDirName+"/"+mp4Name)
+	err = copyFileContents(videoDirName+"/"+randomVideo.Name(), copyPlaceDirName+"/video"+mp4File)
 	if err != nil {
 		return err
 	}

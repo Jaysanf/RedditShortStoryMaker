@@ -6,7 +6,11 @@ const (
 )
 
 const (
-	mp3Name  string = "audio.mp3"
-	mp4Name  string = "video.mp4"
-	textName string = "transcript.txt"
+	mp3File string = ".mp3"
+	mp4File string = ".mp4"
+	txtFile string = ".txt"
+)
+
+const (
+	numberOfWordsPerSplit int = 15
 )

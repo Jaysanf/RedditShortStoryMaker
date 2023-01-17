@@ -3,6 +3,7 @@ package Bundler
 import (
 	"io"
 	"os"
+	"strings"
 )
 
 // copyFileContents copies the contents of the file named src to the file named
@@ -30,4 +31,17 @@ func copyFileContents(src, dst string) (err error) {
 	}
 	err = out.Sync()
 	return
+}
+
+func divideText(text string, x int) []string {
+	words := strings.Fields(text)
+	var dividedText []string
+	for i := 0; i < len(words); i += x {
+		j := i + x
+		if j > len(words) {
+			j = len(words)
+		}
+		dividedText = append(dividedText, strings.Join(words[i:j], " "))
+	}
+	return dividedText
 }
