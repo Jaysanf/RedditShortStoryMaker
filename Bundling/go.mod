@@ -6,6 +6,7 @@ require (
 	github.com/TwiN/go-away v1.6.9
 	github.com/aws/aws-sdk-go v1.44.179
 	github.com/joho/godotenv v1.4.0
+	github.com/tcolgate/mp3 v0.0.0-20170426193717-e79c5a46d300
 	github.com/vartanbeno/go-reddit/v2 v2.0.1
 	golang.org/x/exp v0.0.0-20230111222715-75897c7a292a
 )

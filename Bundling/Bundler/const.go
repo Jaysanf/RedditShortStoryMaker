@@ -8,7 +8,6 @@ const (
 const (
 	mp3File string = ".mp3"
 	mp4File string = ".mp4"
-	txtFile string = ".txt"
 )
 
 const (

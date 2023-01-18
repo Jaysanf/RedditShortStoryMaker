@@ -2,7 +2,6 @@ package main
 
 import (
 	"RedditShortStoryMaker/Bundler"
-	"RedditShortStoryMaker/ProfanityHandler"
 	"RedditShortStoryMaker/RedditHandler"
 	"fmt"
 	"github.com/joho/godotenv"
@@ -44,7 +43,7 @@ func main() {
 		panic("No post found")
 	}
 
-	ProfanityHandler.RemoveProfanity(&post.Body)
+	//ProfanityHandler.RemoveProfanity(&post.Body)
 	err = Bundler.Bundle(post)
 	if err != nil {
 		panic(err)

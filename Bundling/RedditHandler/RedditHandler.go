@@ -51,7 +51,7 @@ func (redditHandler *RedditHandler) GetUnusedPost(posts []*reddit.Post, ids []st
 	csvwriter := csv.NewWriter(f)
 
 	for _, post := range posts {
-		if !slices.Contains(ids, post.ID) {
+		if !slices.Contains(ids, post.ID) && !post.NSFW {
 			err = csvwriter.Write(append(ids, post.ID))
 			if err != nil {
 				return nil, err
