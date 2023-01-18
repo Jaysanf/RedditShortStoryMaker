@@ -1,14 +1,84 @@
 package Bundler
 
 import (
+	MP3Handler2 "RedditShortStoryMaker/MP3Handler"
 	"fmt"
+	"github.com/hyacinthus/mp3join"
 	"github.com/tcolgate/mp3"
+	"github.com/vartanbeno/go-reddit/v2/reddit"
 	"golang.org/x/exp/rand"
 	"io"
 	"os"
+	"path/filepath"
+	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
+
+// Create multiple mp3 and an SRT file for the reddit post
+func fractionizePost(path string, post *reddit.Post) error {
+	bodyFractionized := divideText(post.Body, numberOfWordsPerSplit)
+	bodyFractionized = append([]string{post.Title}, bodyFractionized...) // Adding the Title
+
+	// Create a new SRT file to write the subtitles to
+	srt, err := os.Create(path + "subtitles.srt")
+	if err != nil {
+		return err
+	}
+	defer srt.Close()
+	// Init var
+	subtitleNum := 1
+	startTime := time.Duration(0)
+	endTime := time.Duration(0)
+
+	mp3Handler := MP3Handler2.NewPollyService(MP3Handler2.Matthew)
+	for i, chunkOfWords := range bodyFractionized {
+		fileNameMP3 := path + "mp3/" + strconv.Itoa(i)
+
+		err := mp3Handler.Synthesize(chunkOfWords, fileNameMP3+mp3File)
+		if err != nil {
+			return err
+		}
+		duration, err := getDurationOfMp3File(fileNameMP3 + mp3File)
+		if err != nil {
+			return err
+		}
+		endTime += time.Duration(duration * float64(time.Second))
+
+		startTimeStr := fmtDuration(startTime)
+
+		endTimeStr := fmtDuration(endTime)
+
+		// Write to srt file
+		_, err = fmt.Fprintln(srt, subtitleNum)
+		if err != nil {
+			return err
+		}
+		_, err = fmt.Fprintf(srt, "%s --> %s\n", startTimeStr, endTimeStr)
+		if err != nil {
+			return err
+		}
+		_, err = fmt.Fprintln(srt, chunkOfWords)
+		if err != nil {
+			return err
+		}
+		_, err = fmt.Fprintln(srt, "") // New line at the end
+		if err != nil {
+			return err
+		}
+		// Increment
+		startTime = endTime
+		subtitleNum++
+	}
+	text := post.Title + ".\n" + post.Body
+	err = mp3Handler.Synthesize(text[:Min(len(text), 3000)], path+"audio"+mp3File)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 // copyFileContents copies the contents of the file named src to the file named
 // by dst. The file will be created if it does not already exist. If the
@@ -84,6 +154,8 @@ func getDurationOfMp3File(mp3File string) (float64, error) {
 	t := 0.0
 
 	r, err := os.Open(mp3File)
+	defer r.Close()
+
 	if err != nil {
 		fmt.Println(err)
 		return -1, err
@@ -104,4 +176,55 @@ func getDurationOfMp3File(mp3File string) (float64, error) {
 	}
 
 	return t, nil
+}
+
+func mergeMP3FilesIntoOne(mp3Dir string, fileName string) error {
+	joiner := mp3join.New()
+	files, err := os.ReadDir(mp3Dir)
+	if err != nil {
+		return err
+	}
+
+	sort.Slice(files, func(i, j int) bool {
+		x, _ := strconv.Atoi(files[i].Name()[:len(files[i].Name())-len(filepath.Ext(files[i].Name()))])
+		y, _ := strconv.Atoi(files[j].Name()[:len(files[j].Name())-len(filepath.Ext(files[j].Name()))])
+		return x < y
+	})
+	// readers is the input mp3 files
+	for _, file := range files {
+		mp3Byte, err := os.Open(mp3Dir + "/" + file.Name())
+		if err != nil {
+			return err
+		}
+
+		err = joiner.Append(mp3Byte)
+		if err != nil {
+			return err
+		}
+		err = mp3Byte.Close()
+		if err != nil {
+			return err
+		}
+	}
+
+	dest := joiner.Reader()
+	f, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = dest.WriteTo(f)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func Min(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
 }

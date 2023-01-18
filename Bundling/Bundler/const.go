@@ -11,5 +11,5 @@ const (
 )
 
 const (
-	numberOfWordsPerSplit int = 15
+	numberOfWordsPerSplit int = 50
 )
