@@ -1,7 +1,7 @@
 package Bundler
 
 import (
-	"RedditShortStoryMaker/MP3Handler"
+	MP3Handler2 "RedditShortStoryMaker/MP3Handler"
 	"github.com/vartanbeno/go-reddit/v2/reddit"
 	"golang.org/x/exp/rand"
 	"os"
@@ -15,7 +15,7 @@ type Bundler interface {
 
 func Bundle(post *reddit.Post) error {
 	timeStamp := time.Now().Format("01-02-2006_15-04-05")
-	err := os.Mkdir("Shorts/"+timeStamp, os.ModePerm)
+	err := os.Mkdir(dirOutputName+"/"+timeStamp, os.ModePerm)
 	if err != nil {
 		return err
 	}
@@ -37,9 +37,9 @@ func Bundle(post *reddit.Post) error {
 // Create multiple mp3 and txt files for the reddit post
 func fractionizePost(path string, post *reddit.Post) error {
 	bodyFractionized := divideText(post.Body, numberOfWordsPerSplit)
-	// Adding the Title
-	bodyFractionized = append([]string{post.Title}, bodyFractionized...)
-	mp3Handler := MP3Handler.NewPollyService(MP3Handler.Matthew)
+
+	bodyFractionized = append([]string{post.Title}, bodyFractionized...) // Adding the Title
+	mp3Handler := MP3Handler2.NewPollyService(MP3Handler2.Matthew)
 	for i, chunkOfWords := range bodyFractionized {
 		fileName := path + strconv.Itoa(i)
 		err := mp3Handler.Synthesize(chunkOfWords, fileName+mp3File)
