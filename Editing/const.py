@@ -1,4 +1,4 @@
 BUNDLE_DIR = "../Shorts"
-MP3_DIR = "MP3"
-TXT_DIR = "TXT"
+AUDIO_FILE = "audio.mp3"
+SRT_FILE = "subtitles.srt"
 VIDEO_FILE = "video.mp4"

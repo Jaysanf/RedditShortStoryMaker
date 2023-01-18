@@ -5,3 +5,4 @@ Shorts/*
 !Shorts/.gitkeep
 Bundling/RedditHandler/postID.csv
 Editing/.idea
+__pycache__/
