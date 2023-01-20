@@ -2,6 +2,7 @@ package Bundler
 
 import (
 	MP3Handler2 "RedditShortStoryMaker/MP3Handler"
+	"encoding/csv"
 	"fmt"
 	"github.com/hyacinthus/mp3join"
 	"github.com/tcolgate/mp3"
@@ -22,11 +23,14 @@ func fractionizePost(path string, post *reddit.Post) error {
 	bodyFractionized = append([]string{post.Title}, bodyFractionized...) // Adding the Title
 
 	// Create a new SRT file to write the subtitles to
-	srt, err := os.Create(path + "subtitles.srt")
+	f, err := os.Create(path + "subtitles.csv")
 	if err != nil {
 		return err
 	}
-	defer srt.Close()
+	defer f.Close()
+
+	csvwriter := csv.NewWriter(f)
+
 	// Init var
 	subtitleNum := 1
 	startTime := time.Duration(0)
@@ -46,27 +50,14 @@ func fractionizePost(path string, post *reddit.Post) error {
 		}
 		endTime += time.Duration(duration * float64(time.Second))
 
-		startTimeStr := fmtDuration(startTime)
+		startTimeStr := fmt.Sprintf("%.2f", startTime.Seconds())
+		endTimeStr := fmt.Sprintf("%.2f", endTime.Seconds())
 
-		endTimeStr := fmtDuration(endTime)
-
-		// Write to srt file
-		_, err = fmt.Fprintln(srt, subtitleNum)
+		err = csvwriter.Write([]string{startTimeStr, endTimeStr, chunkOfWords})
 		if err != nil {
 			return err
 		}
-		_, err = fmt.Fprintf(srt, "%s --> %s\n", startTimeStr, endTimeStr)
-		if err != nil {
-			return err
-		}
-		_, err = fmt.Fprintln(srt, chunkOfWords)
-		if err != nil {
-			return err
-		}
-		_, err = fmt.Fprintln(srt, "") // New line at the end
-		if err != nil {
-			return err
-		}
+		csvwriter.Flush()
 		// Increment
 		startTime = endTime
 		subtitleNum++

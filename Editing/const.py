@@ -1,4 +1,5 @@
-BUNDLE_DIR = "../Shorts"
+BUNDLE_DIR = "Shorts"
 AUDIO_FILE = "audio.mp3"
-SRT_FILE = "subtitles.srt"
+SUB_FILE = "subtitles.csv"
 VIDEO_FILE = "video.mp4"
+MAX_SECONDS = 60

@@ -1,6 +1,7 @@
 package RedditHandler
 
 import (
+	"RedditShortStoryMaker/Utils"
 	"context"
 	"encoding/csv"
 	"fmt"
@@ -13,8 +14,6 @@ type RedditHandler struct {
 	client *reddit.Client
 }
 
-/* TODO: DB pour garder post déjà used par la chaine
- */
 func (redditHandler *RedditHandler) GetClient(id string, secret string, username string, password string) error {
 	credentials := reddit.Credentials{ID: id, Secret: secret, Username: username, Password: password}
 	client, err := reddit.NewClient(credentials)
@@ -42,7 +41,12 @@ func (redditHandler *RedditHandler) GetTopPosts(subredditName string, amount int
 }
 
 func (redditHandler *RedditHandler) GetUnusedPost(posts []*reddit.Post, ids []string) (*reddit.Post, error) {
-	f, err := os.OpenFile(postIDCsvPath, os.O_CREATE, os.ModePerm)
+	workingPath, err := Utils.GetWorkingDirPath()
+	if err != nil {
+		panic(err)
+	}
+
+	f, err := os.OpenFile(workingPath+postIDCsvPath, os.O_CREATE, os.ModePerm)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +69,12 @@ func (redditHandler *RedditHandler) GetUnusedPost(posts []*reddit.Post, ids []st
 }
 
 func (redditHandler *RedditHandler) GetUsedPostID() ([]string, error) {
-	f, err := os.OpenFile(postIDCsvPath, os.O_CREATE, os.ModePerm)
+	workingPath, err := Utils.GetWorkingDirPath()
+	if err != nil {
+		panic(err)
+	}
+
+	f, err := os.OpenFile(workingPath+postIDCsvPath, os.O_CREATE, os.ModePerm)
 	if err != nil {
 		return nil, err
 	}

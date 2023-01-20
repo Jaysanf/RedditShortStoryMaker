@@ -1,5 +1,5 @@
 package RedditHandler
 
 const (
-	postIDCsvPath string = "RedditHandler/postID.csv"
+	postIDCsvPath string = "\\Bundling\\RedditHandler\\postID.csv"
 )

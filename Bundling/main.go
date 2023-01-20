@@ -3,17 +3,21 @@ package main
 import (
 	"RedditShortStoryMaker/Bundler"
 	"RedditShortStoryMaker/RedditHandler"
+	"RedditShortStoryMaker/Utils"
 	"fmt"
 	"github.com/joho/godotenv"
-	"log"
 	"os"
 )
 
 func init() {
-	err := godotenv.Load("../.env")
-
+	workingPath, err := Utils.GetWorkingDirPath()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		panic(err)
+	}
+
+	err = godotenv.Load(workingPath + "\\.env")
+	if err != nil {
+		panic(err)
 	}
 }
 

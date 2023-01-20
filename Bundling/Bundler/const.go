@@ -1,8 +1,9 @@
 package Bundler
 
+
 const (
-	dirOutputName string = "../Shorts"
-	dirClipsName  string = "../60SecondsClips"
+	dirOutputName string = "\\Shorts"
+	dirClipsName  string = "\\60SecondsClips"
 )
 
 const (
