@@ -1,7 +1,7 @@
 package RedditHandler
 
 import (
-	"RedditShortStoryMaker/Utils"
+	"Bundling/Utils"
 	"context"
 	"encoding/csv"
 	"fmt"

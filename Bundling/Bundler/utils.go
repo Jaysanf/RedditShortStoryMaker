@@ -1,7 +1,7 @@
 package Bundler
 
 import (
-	MP3Handler2 "RedditShortStoryMaker/MP3Handler"
+	MP3Handler2 "Bundling/MP3Handler"
 	"encoding/csv"
 	"fmt"
 	"github.com/hyacinthus/mp3join"

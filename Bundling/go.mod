@@ -1,4 +1,4 @@
-module RedditShortStoryMaker
+module Bundling
 
 go 1.19
 

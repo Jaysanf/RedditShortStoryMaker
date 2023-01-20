@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"Posting/YoutubeUploader"
+)
 
 func main() {
-	fmt.Println("HELLO")
+	YoutubeUploader.Test()
 }

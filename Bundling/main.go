@@ -1,9 +1,9 @@
 package main
 
 import (
-	"RedditShortStoryMaker/Bundler"
-	"RedditShortStoryMaker/RedditHandler"
-	"RedditShortStoryMaker/Utils"
+	"Bundling/Bundler"
+	"Bundling/RedditHandler"
+	"Bundling/Utils"
 	"fmt"
 	"github.com/joho/godotenv"
 	"os"

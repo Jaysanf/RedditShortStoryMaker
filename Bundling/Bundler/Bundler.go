@@ -1,7 +1,7 @@
 package Bundler
 
 import (
-	"RedditShortStoryMaker/Utils"
+	"Bundling/Utils"
 	"github.com/vartanbeno/go-reddit/v2/reddit"
 	"os"
 	"time"
