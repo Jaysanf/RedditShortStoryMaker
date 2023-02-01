@@ -1,6 +1,8 @@
-$currentDirectory = Get-Location
+$currentDirectory = $PSScriptRoot
+$bundlingDirectory = $currentDirectory + "\Bundling"
+$postingDirectory = $currentDirectory + "\Posting"
 
-cd  "Bundling"
+cd  $bundlingDirectory
 
 & go build main.go
 if ($LASTEXITCODE -ne 0) {
@@ -31,7 +33,7 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-cd "Posting"
+cd $postingDirectory
 
 & go build main.go
 if ($LASTEXITCODE -ne 0) {
