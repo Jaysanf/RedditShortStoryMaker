@@ -52,4 +52,3 @@ if ($LASTEXITCODE -ne 0) {
 
 
 Write-Host "All scripts ran successfully"
-read-host -Prompt "Press Enter to exit"
