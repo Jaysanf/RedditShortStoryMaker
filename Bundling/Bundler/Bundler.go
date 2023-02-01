@@ -35,6 +35,10 @@ func Bundle(post *reddit.Post) error {
 	}
 
 	//err = mergeMP3FilesIntoOne(path+"/mp3", path+"audio"+mp3File)
+	err = savePost(path, post)
+	if err != nil {
+		return err
+	}
 
 	err = getRandomBackgroundVideo(workingPath+dirClipsName, path)
 	if err != nil {

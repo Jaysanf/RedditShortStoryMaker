@@ -3,15 +3,13 @@ package Bundler
 import (
 	MP3Handler2 "Bundling/MP3Handler"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
-	"github.com/hyacinthus/mp3join"
 	"github.com/tcolgate/mp3"
 	"github.com/vartanbeno/go-reddit/v2/reddit"
 	"golang.org/x/exp/rand"
 	"io"
 	"os"
-	"path/filepath"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -141,6 +139,26 @@ func getRandomBackgroundVideo(videoDirName, copyPlaceDirName string) error {
 	return nil
 }
 
+func savePost(path string, post *reddit.Post) error {
+	fileNamePost := path + "post" + txtFile
+	postJSON, err := json.Marshal(post)
+	if err != nil {
+		return err
+	}
+
+	f, err := os.Create(fileNamePost)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.Write(postJSON)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func getDurationOfMp3File(mp3File string) (float64, error) {
 	t := 0.0
 
@@ -167,50 +185,6 @@ func getDurationOfMp3File(mp3File string) (float64, error) {
 	}
 
 	return t, nil
-}
-
-func mergeMP3FilesIntoOne(mp3Dir string, fileName string) error {
-	joiner := mp3join.New()
-	files, err := os.ReadDir(mp3Dir)
-	if err != nil {
-		return err
-	}
-
-	sort.Slice(files, func(i, j int) bool {
-		x, _ := strconv.Atoi(files[i].Name()[:len(files[i].Name())-len(filepath.Ext(files[i].Name()))])
-		y, _ := strconv.Atoi(files[j].Name()[:len(files[j].Name())-len(filepath.Ext(files[j].Name()))])
-		return x < y
-	})
-	// readers is the input mp3 files
-	for _, file := range files {
-		mp3Byte, err := os.Open(mp3Dir + "/" + file.Name())
-		if err != nil {
-			return err
-		}
-
-		err = joiner.Append(mp3Byte)
-		if err != nil {
-			return err
-		}
-		err = mp3Byte.Close()
-		if err != nil {
-			return err
-		}
-	}
-
-	dest := joiner.Reader()
-	f, err := os.Create(fileName)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	_, err = dest.WriteTo(f)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func Min(x, y int) int {

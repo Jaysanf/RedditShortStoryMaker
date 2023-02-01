@@ -1,8 +1,12 @@
 package YoutubeUploader
 
 import (
+	"Posting/Utils"
 	"encoding/json"
 	"fmt"
+	"golang.org/x/net/context"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"log"
 	"net"
 	"net/http"
@@ -12,10 +16,6 @@ import (
 	"os/user"
 	"path/filepath"
 	"runtime"
-
-	"golang.org/x/net/context"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
 )
 
 // This variable indicates whether the script should launch a web server to
@@ -58,8 +58,12 @@ https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 // then generate a Client. It returns the generated Client.
 func getClient(scope string) *http.Client {
 	ctx := context.Background()
+	workingPath, err := Utils.GetWorkingDirPath()
+	if err != nil {
+		panic(err)
+	}
 
-	b, err := os.ReadFile("client_secret.json")
+	b, err := os.ReadFile(workingPath + "\\client_secret.json")
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
 	}
@@ -139,7 +143,7 @@ func openURL(url string) error {
 
 // Exchange the authorization code for an access token
 func exchangeToken(config *oauth2.Config, code string) (*oauth2.Token, error) {
-	tok, err := config.Exchange(context.Background(), code)
+	tok, err := config.Exchange(oauth2.NoContext, code)
 	if err != nil {
 		log.Fatalf("Unable to retrieve token %v", err)
 	}

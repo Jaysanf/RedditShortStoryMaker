@@ -14,7 +14,7 @@ def combineAudioAndVideo(directory_path:str):
 
     generator = lambda txt: TextClip(txt,
                                      font='Berlin-Sans-FB-Demi-Bold',
-                                     size=(600, None),
+                                     size=(700, None),
                                      fontsize=60,
                                      color='white',
                                      stroke_color='black',
