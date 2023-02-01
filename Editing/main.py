@@ -3,6 +3,7 @@ import os
 
 from moviepy.editor import *
 from moviepy.video.tools.subtitles import SubtitlesClip
+from moviepy.video.fx import resize
 from datetime import datetime
 from const import *
 
@@ -32,6 +33,7 @@ def combineAudioAndVideo(directory_path:str):
     clip = clip.set_audio(audio)
 
     result = CompositeVideoClip([clip, subtitles.set_pos('center')])
+    #result = resize.resize(result,newsize=(1080,1920))
 
     result.write_videofile(directory_path + "\\" + "final.mp4", fps=clip.fps, temp_audiofile="temp-audio.m4a",
                            remove_temp=True, codec="libx264", audio_codec="aac")
