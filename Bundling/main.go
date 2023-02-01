@@ -29,7 +29,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	posts, err := redditHandler.GetTopPosts("tifu", 25, "week")
+
+	posts, err := redditHandler.GetTopPosts(Utils.GetRandomSubreddit(), 25, "week")
 	if err != nil {
 		panic(err)
 	}

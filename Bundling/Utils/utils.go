@@ -1,8 +1,10 @@
 package Utils
 
 import (
+	"golang.org/x/exp/rand"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 type Utils interface {
@@ -22,5 +24,11 @@ func GetWorkingDirPath() (string, error) {
 	}
 
 	return workingPath, nil
+}
 
+var subReddits = []string{"tifu", "amitheasshole"}
+
+func GetRandomSubreddit() string {
+	rand.Seed(uint64(time.Now().UnixNano()))
+	return subReddits[rand.Intn(len(subReddits))]
 }
