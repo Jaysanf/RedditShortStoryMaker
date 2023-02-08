@@ -70,3 +70,10 @@ func GetLatestBundle(path string) (string, error) {
 
 	return path + "\\" + latestTimestampDir, nil
 }
+
+func Min(x, y int) int {
+	if x > y {
+		return y
+	}
+	return x
+}

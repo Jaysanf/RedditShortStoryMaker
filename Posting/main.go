@@ -34,5 +34,5 @@ func main() {
 		panic(err)
 	}
 
-	YoutubeUploader.UploadVideo(bundlePath+"\\final.mp4", post.Title[0:100])
+	YoutubeUploader.UploadVideo(bundlePath+"\\final.mp4", post.Title[0:Utils.Min(100, len(post.Title))])
 }
